@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SketchNest</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #fff8f2;
+      color: #40364a;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      text-align: center;
+      padding: 45px 20px 30px;
+    }
+
+    .logo {
+      margin: 0;
+      font-size: 56px;
+      color: #8b5fbf;
+      font-style: italic;
+      letter-spacing: 2px;
+      text-shadow: 3px 3px #f0cfff;
+    }
+
+    .subtitle {
+      color: #8b5fbf;
+      font-size: 21px;
+      margin: 12px 0 3px;
+    }
+
+    .tagline {
+      color: #8b5fbf;
+      font-size: 17px;
+      font-style: italic;
+    }
+
+    .nest {
+      font-size: 80px;
+      margin: 15px;
+    }
+
+    .prompt-area {
+      text-align: center;
+      margin: 10px 20px 30px;
+    }
+
+    button {
+      border: none;
+      border-radius: 18px;
+      padding: 12px 18px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .main-button {
+      background: #8b5fbf;
+      color: white;
+    }
+
+    .prompt {
+      color: #8b5fbf;
+      font-weight: bold;
+      font-size: 18px;
+      min-height: 28px;
+    }
+
+    .studio {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .studio-title {
+      text-align: center;
+      color: #8b5fbf;
+      font-size: 30px;
+    }
+
+    .canvas-box {
+      background: white;
+      border: 4px solid #8b5fbf;
+      border-radius: 20px;
+      padding: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 480px;
+      background: white;
+      border-radius: 12px;
+      touch-action: none;
+    }
+
+    .toolbar {
+      margin-top: 18px;
+      background: white;
+      padding: 18px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    }
+
+    .tool-row {
+      margin: 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #6c537c;
+      margin-right: 8px;
+    }
+
+    .brush-button,
+    .size-button,
+    .eraser-button,
+    .action-button {
+      background: #eee5f4;
+      color: #4b3b55;
+    }
+
+    .brush-button.active,
+    .eraser-button.active,
+    .size-button.active {
+      background: #8b5fbf;
+      color: white;
+      box-shadow: 0 0 0 3px #d9b9ed;
+    }
+
+    /* COLOR PICKER */
+
+    .color-section {
+      width: 100%;
+      max-width: 450px;
+      margin: 18px auto;
+      background: #f8f2fb;
+      padding: 17px;
+      border-radius: 18px;
+    }
+
+    .color-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: bold;
+      color: #6c537c;
+      margin-bottom: 12px;
+    }
+
+    .color-spectrum {
+      width: 100%;
+      height: 190px;
+      border-radius: 14px;
+      cursor: crosshair;
+      position: relative;
+
+      background:
+        linear-gradient(
+          to bottom,
+          transparent,
+          #000
+        ),
+        linear-gradient(
+          to right,
+          #ff0000,
+          #ffff00,
+          #00ff00,
+          #00ffff,
+          #0000ff,
+          #ff00ff,
+          #ff0000
+        );
+    }
+
+    .brightness-slider {
+      width: 100%;
+      height: 25px;
+      margin-top: 12px;
+      border-radius: 15px;
+
+      background:
+        linear-gradient(
+          to right,
+          #ffffff,
+          #8b5fbf,
+          #000000
+        );
+
+      cursor: pointer;
+    }
+
+    .hex-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 14px;
+      gap: 5px;
+    }
+
+    .hex-row input {
+      width: 105px;
+      padding: 9px;
+      border: 2px solid #d8c5e2;
+      border-radius: 10px;
+      font-size: 15px;
+      text-transform: uppercase;
+    }
+
+    .hex-row button {
+      background: #8b5fbf;
+      color: white;
+      padding: 9px 13px;
+    }
+
+    .recent-title {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #6c537c;
+    }
+
+    .recent-colors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 9px;
+    }
+
+    .recent-color {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      border: 3px solid white;
+      outline: 2px solid #ddd;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .current-color {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid white;
+      outline: 2px solid #aaa;
+      display: inline-block;
+    }
+
+    .save-button {
+      background: #6ca878;
+      color: white;
+    }
+
+    .clear-button {
+      background: #d96c6c;
+      color: white;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 25px;
+      background: #f2e6f7;
+      color: #6b5575;
+    }
+
+    @media (max-width: 600px) {
+      .logo {
+        font-size: 42px;
+      }
+
+      canvas {
+        height: 380px;
+      }
+
+      .toolbar {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+
+<header>
+
+  <h1 class="logo">SketchNest</h1>
+
+    <p class="subtitle">A place for young kids to doodle.</p>
+<p class="subtitle">A place for every sketch.</p>
+
+  <p class="tagline">Easy tools for young kids. Unleashes their creativity while keeping things simple. Perfect for ages 4-7.</p>
+
+  <div class="nest">🪺</div>
+
+  <div class="prompt-area">
+
+    <button class="main-button" onclick="goToStudio()">
+      🎨 Start Drawing
+    </button>
+
+    <button class="main-button" onclick="givePrompt()">
+      ✨ Give Me a Prompt
+    </button>
+
+    <p class="prompt" id="prompt"></p>
+
+  </div>
+
+</header>
+
+
+<main class="studio" id="studio">
+
+  <h2 class="studio-title">🎨 Sketch Studio</h2>
+
+  <div class="canvas-box">
+    <canvas id="canvas"></canvas>
+  </div>
+
+
+  <div class="toolbar">
+
+    <!-- BRUSH TYPES -->
+
+    <div class="tool-row">
+
+      <span class="label">Brush:</span>
+
+      <button
+        class="brush-button active"
+        id="pencilButton"
+        onclick="setBrush('pencil')">
+        ✏️ Pencil
+      </button>
+
+      <button
+        class="brush-button"
+        id="markerButton"
+        onclick="setBrush('marker')">
+        🖊️ Marker
+      </button>
+
+      <button
+        class="brush-button"
+        id="paintButton"
+        onclick="setBrush('paint')">
+        🖌️ Paint
+      </button>
+
+      <button
+        class="brush-button"
+        id="highlighterButton"
+        onclick="setBrush('highlighter')">
+        🖍️ Highlighter
+      </button>
+
+    </div>
+
+
+    <!-- BRUSH SIZES -->
+
+    <div class="tool-row">
+
+      <span class="label">Size:</span>
+
+      <button class="size-button" onclick="setSize(3, this)">
+        Tiny
+      </button>
+
+      <button class="size-button" onclick="setSize(7, this)">
+        Small
+      </button>
+
+      <button class="size-button active" onclick="setSize(14, this)">
+        Medium
+      </button>
+
+      <button class="size-button" onclick="setSize(25, this)">
+        Large
+      </button>
+
+      <button class="size-button" onclick="setSize(45, this)">
+        Huge
+      </button>
+
+    </div>
+
+
+    <!-- PROFESSIONAL COLOR PICKER -->
+
+    <div class="color-section">
+
+      <div class="color-title">
+
+        <span>🎨 Color</span>
+
+        <span
+          class="current-color"
+          id="currentColor">
+        </span>
+
+      </div>
+
+
+      <div
+        class="color-spectrum"
+        id="colorSpectrum">
+      </div>
+
+
+      <div
+        class="brightness-slider"
+        id="brightnessSlider">
+      </div>
+
+
+      <div class="hex-row">
+
+        <span>#</span>
+
+        <input
+          id="hexInput"
+          type="text"
+          value="8B5FBF"
+          maxlength="6">
+
+        <button onclick="applyHexColor()">
+          Apply
+        </button>
+
+      </div>
+
+
+      <div class="recent-title">
+        Recent colors
+      </div>
+
+      <div
+        class="recent-colors"
+        id="recentColors">
+      </div>
+
+    </div>
+
+
+    <!-- ERASER -->
+
+    <div class="tool-row">
+
+      <span class="label">Eraser:</span>
+
+      <button
+        class="eraser-button"
+        onclick="setEraserSize(10, this)">
+        Small
+      </button>
+
+      <button
+        class="eraser-button"
+        onclick="setEraserSize(25, this)">
+        Medium
+      </button>
+
+      <button
+        class="eraser-button"
+        onclick="setEraserSize(50, this)">
+        Large
+      </button>
+
+      <button
+        class="eraser-button"
+        id="eraserTool"
+        onclick="useEraser()">
+        🧽 Eraser
+      </button>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="tool-row">
+
+      <button
+        class="action-button"
+        onclick="undo()">
+        ↩️ Undo
+      </button>
+
+      <button
+        class="action-button"
+        onclick="redo()">
+        ↪️ Redo
+      </button>
+
+      <button
+        class="clear-button"
+        onclick="clearCanvas()">
+        🗑️ Clear
+      </button>
+
+      <button
+        class="save-button"
+        onclick="saveDrawing()">
+        💾 Save Drawing
+      </button>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<footer>
+  🪺 SketchNest — Think. Sketch. Share.
+</footer>
+
+
+<script>
+
+  /* =========================
+     PROMPTS
+  ========================= */
+
+  const prompts = [
+    "Draw a tiny dragon having a picnic! 🐉",
+    "Draw a magical treehouse! 🌳",
+    "Draw a cat exploring space! 🐱🚀",
+    "Draw your dream bedroom! 🛏️",
+    "Draw an underwater city! 🌊",
+    "Draw a character made entirely of clouds! ☁️",
+    "Draw a tiny café for fairies! 🧚",
+    "Draw your own imaginary animal! 🦄",
+    "Draw a secret garden! 🌸",
+    "Draw a robot's bedroom! 🤖",
+    "Draw a floating island! 🏝️",
+    "Draw a mysterious castle! 🏰"
+  ];
+
+  let lastPrompt = -1;
+
+  function givePrompt() {
+
+    let newPrompt;
+
+    do {
+      newPrompt =
+        Math.floor(Math.random() * prompts.length);
+    }
+
+    while (newPrompt === lastPrompt);
+
+    lastPrompt = newPrompt;
+
+    document.getElementById("prompt")
+      .textContent = prompts[newPrompt];
+  }
+
+
+  function goToStudio() {
+
+    document.getElementById("studio")
+      .scrollIntoView({
+        behavior: "smooth"
+      });
+
+  }
+
+
+  /* =========================
+     CANVAS
+  ========================= */
+
+  const canvas =
+    document.getElementById("canvas");
+
+  const ctx =
+    canvas.getContext("2d");
+
+  let drawing = false;
+
+  let currentColor = "#8b5fbf";
+
+  let brushSize = 14;
+
+  let brushType = "pencil";
+
+  let erasing = false;
+
+  let eraserSize = 25;
+
+  let lastX = 0;
+
+  let lastY = 0;
+
+  let undoStack = [];
+
+  let redoStack = [];
+
+
+  /* =========================
+     CANVAS SETUP
+  ========================= */
+
+  function setupCanvas() {
+
+    const oldImage =
+      canvas.width > 0
+        ? canvas.toDataURL()
+        : null;
+
+    canvas.width =
+      canvas.clientWidth;
+
+    canvas.height =
+      canvas.clientHeight;
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    if (oldImage) {
+
+      const image = new Image();
+
+      image.onload = function() {
+        ctx.drawImage(image, 0, 0);
+      };
+
+      image.src = oldImage;
+
+    }
+
+  }
+
+
+  window.addEventListener(
+    "resize",
+    setupCanvas
+  );
+
+  setupCanvas();
+
+
+  /* =========================
+     POSITION
+  ========================= */
+
+  function getPosition(event) {
+
+    const rect =
+      canvas.getBoundingClientRect();
+
+    return {
+
+      x:
+        (event.clientX - rect.left)
+        * (canvas.width / rect.width),
+
+      y:
+        (event.clientY - rect.top)
+        * (canvas.height / rect.height)
+
+    };
+
+  }
+
+
+  /* =========================
+     UNDO / REDO
+  ========================= */
+
+  function saveState() {
+
+    undoStack.push(
+      canvas.toDataURL()
+    );
+
+    if (undoStack.length > 30) {
+      undoStack.shift();
+    }
+
+    redoStack = [];
+
+  }
+
+
+  function restoreImage(data) {
+
+    const image = new Image();
+
+    image.onload = function() {
+
+      ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      ctx.drawImage(
+        image,
+        0,
+        0
+      );
+
+    };
+
+    image.src = data;
+
+  }
+
+
+  function undo() {
+
+    if (undoStack.length === 0) {
+      return;
+    }
+
+    redoStack.push(
+      canvas.toDataURL()
+    );
+
+    restoreImage(
+      undoStack.pop()
+    );
+
+  }
+
+
+  function redo() {
+
+    if (redoStack.length === 0) {
+      return;
+    }
+
+    undoStack.push(
+      canvas.toDataURL()
+    );
+
+    restoreImage(
+      redoStack.pop()
+    );
+
+  }
+
+
+  /* =========================
+     DRAWING
+  ========================= */
+
+  function startDrawing(event) {
+
+    saveState();
+
+    drawing = true;
+
+    const pos =
+      getPosition(event);
+
+    lastX = pos.x;
+    lastY = pos.y;
+
+    canvas.setPointerCapture(
+      event.pointerId
+    );
+
+    draw(event);
+
+  }
+
+
+  function draw(event) {
+
+    if (!drawing) {
+      return;
+    }
+
+    const points =
+      event.getCoalescedEvents
+        ? event.getCoalescedEvents()
+        : [event];
+
+
+    points.forEach(point => {
+
+      const pos =
+        getPosition(point);
+
+      let x = pos.x;
+      let y = pos.y;
+
+
+      let distance =
+        Math.hypot(
+          x - lastX,
+          y - lastY
+        );
+
+
+      /*
+        Fill in gaps during
+        very fast finger movement.
+      */
+
+      if (distance > 2) {
+
+        const steps =
+          Math.ceil(distance / 2);
+
+        for (
+          let i = 1;
+          i <= steps;
+          i++
+        ) {
+
+          const t =
+            i / steps;
+
+          const ix =
+            lastX +
+            (x - lastX) * t;
+
+          const iy =
+            lastY +
+            (y - lastY) * t;
+
+          drawSmoothPoint(
+            ix,
+            iy
+          );
+
+        }
+
+      }
+
+      else {
+
+        drawSmoothPoint(
+          x,
+          y
+        );
+
+      }
+
+
+      lastX = x;
+      lastY = y;
+
+    });
+
+  }
+
+
+  function drawSmoothPoint(x, y) {
+
+    if (erasing) {
+
+      ctx.globalCompositeOperation =
+        "destination-out";
+
+      ctx.globalAlpha = 1;
+
+      ctx.lineWidth =
+        eraserSize;
+
+    }
+
+    else {
+
+      ctx.globalCompositeOperation =
+        "source-over";
+
+      ctx.strokeStyle =
+        currentColor;
+
+
+      if (brushType === "pencil") {
+
+        ctx.globalAlpha = 1;
+
+        ctx.lineWidth =
+          brushSize;
+
+      }
+
+      else if (brushType === "marker") {
+
+        ctx.globalAlpha = 0.8;
+
+        ctx.lineWidth =
+          brushSize * 1.2;
+
+      }
+
+      else if (brushType === "paint") {
+
+        ctx.globalAlpha = 1;
+
+        ctx.lineWidth =
+          brushSize * 1.5;
+
+      }
+
+      else if (brushType === "highlighter") {
+
+        ctx.globalAlpha = 0.28;
+
+        ctx.lineWidth =
+          brushSize * 2.5;
+
+      }
+
+    }
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      lastX,
+      lastY
+    );
+
+    ctx.lineTo(
+      x,
+      y
+    );
+
+    ctx.stroke();
+
+  }
+
+
+  function stopDrawing(event) {
+
+    if (!drawing) {
+      return;
+    }
+
+    drawing = false;
+
+    ctx.globalAlpha = 1;
+
+    ctx.globalCompositeOperation =
+      "source-over";
+
+    ctx.beginPath();
+
+    try {
+
+      canvas.releasePointerCapture(
+        event.pointerId
+      );
+
+    }
+
+    catch (error) {}
+
+  }
+
+
+  canvas.addEventListener(
+    "pointerdown",
+    startDrawing
+  );
+
+  canvas.addEventListener(
+    "pointermove",
+    draw
+  );
+
+  canvas.addEventListener(
+    "pointerup",
+    stopDrawing
+  );
+
+  canvas.addEventListener(
+    "pointercancel",
+    stopDrawing
+  );
+
+
+  /* =========================
+     BRUSH TYPES
+  ========================= */
+
+  function setBrush(type) {
+
+    brushType = type;
+
+    erasing = false;
+
+    document
+      .querySelectorAll(".brush-button")
+      .forEach(button => {
+        button.classList.remove("active");
+      });
+
+    document
+      .getElementById(
+        type + "Button"
+      )
+      .classList.add("active");
+
+    document
+      .getElementById("eraserTool")
+      .classList.remove("active");
+
+  }
+
+
+  /* =========================
+     BRUSH SIZE
+  ========================= */
+
+  function setSize(size, button) {
+
+    brushSize = size;
+
+    erasing = false;
+
+    document
+      .querySelectorAll(".size-button")
+      .forEach(button => {
+        button.classList.remove("active");
+      });
+
+    button.classList.add("active");
+
+    document
+      .getElementById("eraserTool")
+      .classList.remove("active");
+
+  }
+
+
+  /* =========================
+     COLOR
+  ========================= */
+
+  function changeColor(newColor) {
+
+    currentColor = newColor;
+
+    erasing = false;
+
+    document
+      .getElementById("currentColor")
+      .style.backgroundColor =
+      newColor;
+
+    document
+      .getElementById("hexInput")
+      .value =
+      newColor
+        .replace("#", "")
+        .toUpperCase();
+
+    document
+      .getElementById("eraserTool")
+      .classList.remove("active");
+
+    addRecentColor(newColor);
+
+  }
+
+
+  document
+    .getElementById("currentColor")
+    .style.backgroundColor =
+    currentColor;
+
+
+  /* =========================
+     HEX COLOR
+  ========================= */
+
+  function applyHexColor() {
+
+    let value =
+      document
+        .getElementById("hexInput")
+        .value
+        .trim()
+        .replace("#", "");
+
+    if (
+      /^[0-9A-Fa-f]{6}$/.test(value)
+    ) {
+
+      changeColor(
+        "#" + value
+      );
+
+    }
+
+  }
+
+
+  /* =========================
+     RECENT COLORS
+  ========================= */
+
+  function addRecentColor(color) {
+
+    let recent =
+      JSON.parse(
+        localStorage.getItem(
+          "sketchnestColors"
+        )
+      ) || [];
+
+    recent =
+      recent.filter(
+        c => c !== color
+      );
+
+    recent.unshift(color);
+
+    recent =
+      recent.slice(0, 10);
+
+    localStorage.setItem(
+      "sketchnestColors",
+      JSON.stringify(recent)
+    );
+
+    displayRecentColors();
+
+  }
+
+
+  function displayRecentColors() {
+
+    const container =
+      document.getElementById(
+        "recentColors"
+      );
+
+    container.innerHTML = "";
+
+    let recent =
+      JSON.parse(
+        localStorage.getItem(
+          "sketchnestColors"
+        )
+      ) || [];
+
+
+    recent.forEach(color => {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+      button.className =
+        "recent-color";
+
+      button.style.backgroundColor =
+        color;
+
+      button.onclick = function() {
+
+        changeColor(color);
+
+      };
+
+      container.appendChild(
+        button
+      );
+
+    });
+
+  }
+
+
+  displayRecentColors();
+
+
+  /* =========================
+     COLOR SPECTRUM
+  ========================= */
+
+  document
+    .getElementById("colorSpectrum")
+    .addEventListener(
+      "pointerdown",
+      chooseSpectrumColor
+    );
+
+
+  document
+    .getElementById("colorSpectrum")
+    .addEventListener(
+      "pointermove",
+      function(event) {
+
+        if (event.buttons === 1) {
+
+          chooseSpectrumColor(
+            event
+          );
+
+        }
+
+      }
+    );
+
+
+  function chooseSpectrumColor(event) {
+
+    const box =
+      document
+        .getElementById(
+          "colorSpectrum"
+        )
+        .getBoundingClientRect();
+
+
+    let x =
+      Math.max(
+        0,
+        Math.min(
+          box.width,
+          event.clientX -
+          box.left
+        )
+      );
+
+
+    let y =
+      Math.max(
+        0,
+        Math.min(
+          box.height,
+          event.clientY -
+          box.top
+        )
+      );
+
+
+    let hue =
+      (x / box.width) * 360;
+
+
+    let lightness =
+      50 -
+      (y / box.height) * 50;
+
+
+    let color =
+      hslToHex(
+        hue,
+        100,
+        lightness
+      );
+
+
+    changeColor(color);
+
+  }
+
+
+  function hslToHex(
+    h,
+    s,
+    l
+  ) {
+
+    s /= 100;
+    l /= 100;
+
+    const k =
+      n =>
+        (n + h / 30) % 12;
+
+    const a =
+      s *
+      Math.min(
+        l,
+        1 - l
+      );
+
+    const f =
+      n =>
+        l -
+        a *
+        Math.max(
+          -1,
+          Math.min(
+            k(n) - 3,
+            Math.min(
+              9 - k(n),
+              1
+            )
+          )
+        );
+
+
+    return "#" +
+      [f(0), f(8), f(4)]
+        .map(
+          x =>
+            Math.round(
+              255 * x
+            )
+              .toString(16)
+              .padStart(2, "0")
+        )
+        .join("");
+
+  }
+
+
+  /* =========================
+     ERASER
+  ========================= */
+
+  function setEraserSize(
+    size,
+    button
+  ) {
+
+    eraserSize = size;
+
+    erasing = true;
+
+
+    document
+      .querySelectorAll(
+        ".eraser-button"
+      )
+      .forEach(b => {
+
+        b.classList.remove(
+          "active"
+        );
+
+      });
+
+
+    button.classList.add(
+      "active"
+    );
+
+
+    document
+      .querySelectorAll(
+        ".brush-button"
+      )
+      .forEach(b => {
+
+        b.classList.remove(
+          "active"
+        );
+
+      });
+
+  }
+
+
+  function useEraser() {
+
+    erasing = true;
+
+    document
+      .getElementById(
+        "eraserTool"
+      )
+      .classList.add(
+        "active"
+      );
+
+
+    document
+      .querySelectorAll(
+        ".brush-button"
+      )
+      .forEach(b => {
+
+        b.classList.remove(
+          "active"
+        );
+
+      });
+
+  }
+
+
+  /* =========================
+     CLEAR
+  ========================= */
+
+  function clearCanvas() {
+
+    saveState();
+
+    ctx.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+  }
+
+
+  /* =========================
+     SAVE
+  ========================= */
+
+  function saveDrawing() {
+
+    const link =
+      document.createElement("a");
+
+    link.download =
+      "my-sketchnest-drawing.png";
+
+    link.href =
+      canvas.toDataURL(
+        "image/png"
+      );
+
+    link.click();
+
+  }
+
+</script>
+
+</body>
+</html>
